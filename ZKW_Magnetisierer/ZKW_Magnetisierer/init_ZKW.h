@@ -35,7 +35,7 @@ void init_adc(void)
 
 void init_ext_interrupt(void)
 {
-	MCUCR = MCUCR | (1<<ISC00);		//rising edge Trigger
+	MCUCR = MCUCR &~ (1<<ISC00);		//falling edge
 	MCUCR = MCUCR | (1<<ISC01);
 	
 	GIMSK = GIMSK | (1<<INT0);		//Int0 Interrupt freischalten

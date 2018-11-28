@@ -1,11 +1,11 @@
 
 
-#define MOSFETTIME 2000
-#define V_CAP 10
+#define MOSFETTIME 20
+#define V_CAP 180		//197 -> max
 #define ZEITDAUER 5
 
-#define MOSFET_EIN PORTB = PORTB | (1<<PB4)
-#define MOSFET_AUS PORTB = PORTB &~ (1<<PB4)
+#define MOSFET_EIN PORTB = PORTB | (1<<PB1)
+#define MOSFET_AUS PORTB = PORTB &~ (1<<PB1)
 
 
 char adc_low;
@@ -32,7 +32,7 @@ ISR(TIMER0_COMPA_vect)
 	
 	if(overflow_counter >= ZEITDAUER)
 	{
-		PORTB = PORTB ^ (1<<PB0);
+		//PORTB = PORTB ^ (1<<PB0);
 		overflow_counter = 0;
 		schalten = 1;
 		
@@ -40,28 +40,27 @@ ISR(TIMER0_COMPA_vect)
 }
 ISR (ADC_vect)
 {
-	PORTB = PORTB ^ (1<<PB1);
 	adc_low = ADCL;
 	adc_high = ADCH;
 	
 	
 	if(adc_high >= V_CAP)
 	{
-		PORTB = PORTB | (1<<PB3);		//LED ein
+		PORTB = PORTB | (1<<PB4);		//LED ein
 	}
 	else
 	{
-		PORTB = PORTB &~ (1<<PB3);		//LED aus
+		PORTB = PORTB &~ (1<<PB4);		//LED aus
 	}
 	
 	ADCSRA = ADCSRA | (1<<ADSC);	//Wandlung starten
 }
 ISR(INT0_vect)
 {
-	if(adc_high >= V_CAP && schalten == 1)
+	if(adc_high >= V_CAP)
 	{
 		mosfet_schalten();
-		schalten = 0;
 	}
+	
 	
 }
